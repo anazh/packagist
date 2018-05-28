@@ -1,0 +1,49 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "cd722a193a40579837cf0293ca9c994d",
+    "packages": [
+        {
+            "name": "dodosss/crc",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "D:/phpStudy/WWW/packagist",
+                "reference": "d02919b23ed033cce140192570900476157e1148"
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dodosss\\Crc\\": "src/CRC"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dodosss",
+                    "email": "lhuibo@163.com"
+                }
+            ],
+            "description": "Calculates CRC16 checksums.",
+            "time": "2018-05-28T07:27:50+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "dodosss/crc": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

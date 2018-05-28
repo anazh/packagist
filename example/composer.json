@@ -1,0 +1,16 @@
+{
+	
+    "repositories":[ 
+       { 
+           "type":"git", 
+           "url":"D:/phpStudy/WWW/packagist" 
+       }
+   ],   
+    
+    "autoload": {
+	    "files": ["vendor/dodosss/crc/src/CRC/helps.php"]
+	},
+	 "require": {
+        "dodosss/crc": "dev-master"
+    }    
+}

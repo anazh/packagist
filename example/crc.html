@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="dodosss">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>crc16</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        /**
+         * crc
+         *
+         * @Author dodosss
+         * @Date 2018/05/21
+         */
+        "use strict"        
+
+        $(function() {
+            $("#device_sn").on('input',function(e){
+                var device_sn = $("input[name='device_sn']").val();
+                var hex_str   = $("#hex_str_screen").html();                
+                device_sn = device_sn.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'');
+                hex_str = hex_str.replace(/&nbsp;/ig, "");
+                if(device_sn.length!=16){
+                    $('#device_sn_msg').html('<span class="tip-error">设备号长度非16位</span>');
+                    return;
+                }
+                $('#device_sn_msg').html("");
+                console.log(hex_str);
+                $.ajax({
+                    type: "POST",
+                    url: "?",
+                    data: {"device_sn":device_sn, "hex_str":hex_str},
+                    dataType: "json",
+                    success: function(result){
+                        console.log(result);
+                        if(result.status=="1"){
+                            $('#device_sn_txt').html(result.data.device_sn_hex);
+                            $('#hex_str_screen').html(result.data.hex_str_screen);
+                            $('#hex_str_screen2').html(result.data.hex_str_screen2);
+
+                            $('#device_sn_msg').html('<span class="tip-success">转换成功</span>');
+                        } else if(result.status=="0"){
+                            $('#device_sn_msg').html('<span class="tip-error">' + result.data.msg + '</span>');
+                        }                                
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        body{
+            font-family:'Source Sans Pro', Helvetica, Arial, "微軟正黑體", sans-serif;
+            /*font-family: "微軟正黑體", "Century Gothic", sans-serif, serif;*/
+            margin:25px auto;
+            margin-top:0;
+            width:60%;
+        }
+        hr {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        #hex_str, #hex_str2{
+            width: 100%;
+            display: inline-block;
+        }
+        .decode, .calc{
+            background-color: #fff;
+        } 
+        .title{
+            font-weight: bold;
+        }   
+        .desc{
+            display: inline-block;
+            height: 28px;
+            line-height: 28px;
+            color: #ddd;
+        }
+        .arrow{
+            color: #ddd;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+        #device_sn{
+            width: 250px;
+            display: inline-block;
+            font-size: 16px;
+            margin-top:5px;
+            font-weight: bold;
+        } 
+
+        .tip-success:before, .tip-error:before {
+            font-family:FontAwesome;
+            font-style:normal;
+            font-weight:400;
+            speak:none;
+            display:inline-block;
+            text-decoration:inherit;
+            width:1em;
+            margin-right:.2em;
+            text-align:center;
+            font-variant:normal;
+            text-transform:none;
+            line-height:1em;
+            margin-left:.2em;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale
+        }
+        .tip-error:before {
+            /*content:'f057';*/
+        }
+        .tip-success:before {
+            /*content:'f00c';*/
+        }
+        .tip-error {
+            color: #D8000C;
+            background-color: #FFD2D2;
+        } 
+        .tip-success {
+            color: #4F8A10;
+            background-color: #DFF2BF;
+        }
+
+        .decode{
+            clear: both;;
+        }
+
+        .package div{
+            display: block;
+            clear: both;
+            word-wrap:break-word ;
+        }
+        
+        .letter{
+             margin-top:5px;
+             width: 30px;
+             height: 28px;
+             line-height: 28px;
+             float: left;
+             text-align: center;
+             border-top:  1px solid #ebe9e9;    
+             border-left:  1px solid #ebe9e9;    
+             border-bottom: 1px solid #ebe9e9;    
+        }
+
+        .sec_1{
+            background: #f9be8f;
+        }
+
+        .sec_2{
+            background: #92cddc;
+        }
+
+        .sec_3{
+            background: #b1a0c6;
+        }
+
+        .sec_4{
+            background: #c2d59b;
+        }
+
+        .sec_5{
+            background: #d99493;
+        }
+
+        .sec_6{
+            background: #94b3d6;
+        }
+
+        .sec_7{
+            background: #928852;
+        }
+
+        .sec_8{
+            background: #00af50;
+        }
+
+        .sec_9{
+            color: #fff;
+            background: #3e3e3e;
+        }
+
+        .howto{
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .howto div{
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;            
+            margin-top: 8px;
+        }
+
+        .howto div .letter{
+            margin-top:0px;
+            font-weight: bold;
+        }
+        .howto div .desc{
+            color: #9d9a9a;
+            padding-right: 1px;
+            padding-left: 1px;
+            border:  1px solid #ebe9e9;
+            
+        }
+    </style>
+</head>
+<body>
+<div>    
+    <div class="howto">
+        <div><span class="sec_1 letter">01</span><span class="desc">设备类型</span></div>
+        <div><span class="sec_2 letter">01</span><span class="desc">软件版本</span></div>
+        <div><span class="sec_3 letter">01</span><span class="desc">通讯类型</span></div>
+        <div><span class="sec_4 letter">01</span><span class="desc">指令名称</span></div>
+        <div><span class="sec_5 letter">01</span><span class="desc">数据长度</span></div>
+        <div><span class="sec_6 letter">01</span><span class="desc">数据域</span></div>
+        <div><span class="sec_7 letter">01</span><span class="desc">seq&nbsp;&nbsp;</span></div>
+        <div><span class="sec_8 letter">01</span><span class="desc">crc&nbsp;&nbsp;</span></div>
+        <div><span class="sec_9 letter">01</span><span class="desc">结束符&nbsp;</span></div>
+    </div>
+    <div class="text-left decode">
+        <span class="title">Decode</span>
+        <span class="desc">（数据解码）</span><br/>
+        <form action="?" method="get" class="form-inline text-left">
+            <textarea id="hex_str" name="hex_str" class="form-control" style="height:55px;" placeholder="16进制字符串" onkeyup="this.value=this.value.replace(/[^\w]/g,'');">{{hex_str}}</textarea>
+            <input type="submit" value="解码" class="btn btn-default input-sm btn_submit" />
+        </form>
+    </div>
+    <hr/>
+    <div class="text-left calc">
+        <span class="title">CRC16</span>
+        <span class="desc">（CRC16值计算）</span><br/>
+        <form action="?" method="get" class="form-inline text-left">
+            <textarea id="hex_str2" name="hex_str2" class="form-control" style="height:55px;" placeholder="16进制字符串">{{hex_str2}}</textarea>
+            <input type="submit" value="计算" class="btn btn-default input-sm btn_submit" />
+        </form>
+    </div>
+    {{result}}
+</div>
+</body>
+</html>
