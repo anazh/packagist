@@ -1,7 +1,7 @@
 <?php
 namespace Dodosss\Crc;
 
-class PackageUtils
+class Utils
 {
     private $crc;
 
@@ -41,13 +41,9 @@ class PackageUtils
     {
         $hexStr = str_replace(" ", "", $hexStr);
         $result = null;
-        $isPackage = false;
         try {
-            $isPackage = $this->check($hexStr);// 数据检测
-        } catch (Exception $e) {
-            print("Caught exception: " . $e->getMessage());
-        }
-        if($isPackage){
+            // 数据检测
+            $isPackage = $this->check($hexStr);
             // 解析数据
             $deviceSN = substr($hexStr, 0, 32);
             $version = substr($hexStr, 32, 2);
@@ -60,6 +56,8 @@ class PackageUtils
             $signature = substr($hexStr, 48 + $dataLengthDec*2, 4);
             $eof = substr($hexStr, 52 + $dataLengthDec*2, 2);
             $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
         return $result;
     }
@@ -74,11 +72,7 @@ class PackageUtils
         }
         $package = null;
         try {
-            $package = $this->parse($hexStr);   // 格式校验，错误抛出异常         
-        } catch (Exception $e) {
-            print("Caught exception: " . $e->getMessage());
-        }
-        if(is_object($package)){
+            $package = $this->parse($hexStr);   // 格式校验，错误抛出异常
             $deviceSN = strToHex($deviceSNStr); // 替换设备号
             $version = $package->getVersion();
             $connectType = $package->getConnectType();
@@ -92,7 +86,9 @@ class PackageUtils
             $crcResult = $this->crc->calculationResult($hexStrNew);
             $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
             $signature = $crcResultCheck; // 新signature
-            $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);
+            $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);       
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
         return $result;
     }

@@ -1,7 +1,6 @@
 <?php
 namespace Dodosss\Crc;
 
-// crc16工具类
 class CRC16
 {
     private $_calculate_type;

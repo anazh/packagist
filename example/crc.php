@@ -3,7 +3,7 @@ namespace Dodo;
 
 use Dodosss\Crc\CRC16;
 use Dodosss\Crc\Package;
-use Dodosss\Crc\PackageUtils;
+use Dodosss\Crc\Utils;
 
 // 加载自动加载文件
 require_once './vendor/autoload.php';
@@ -28,15 +28,15 @@ function init()
             json_error(array("msg" => "设备号长度非16"));
         }
         try {
-            $packageUtils = new PackageUtils();
-            $package = $packageUtils->reBuild($deviceSNStr, $hexStr); // 格式校验，错误抛出异常
+            $utils = new Utils();
+            $package = $utils->reBuild($deviceSNStr, $hexStr); // 格式校验，错误抛出异常
             $data = array(
-                "device_sn_hex"  => $packageUtils->hexScreen($package->getDeviceSN()),
-                "hex_str_screen" => $packageUtils->hexScreen($package->toString()),
-                "hex_str_screen2" => $packageUtils->hexScreen($package->toString(), "2"),
+                "device_sn_hex"  => $utils->hexScreen($package->getDeviceSN()),
+                "hex_str_screen" => $utils->hexScreen($package->toString()),
+                "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
             );
             json_success($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             json_error(array("msg" => $e->getMessage()));
         }
     }
@@ -67,18 +67,18 @@ function parse($hexStr)
         return $html;
     }
     try {
-        $packageUtils = new PackageUtils();
-        $package = $packageUtils->parse($hexStr);
-    } catch (Exception $e) {
+        $utils = new Utils();
+        $package = $utils->parse($hexStr);
+    } catch (\Exception $e) {
         $html ="Caught exception: ".$e->getMessage();
         return $html;
     }
     if(is_object($package)){
         $html = '';
         $html .= '<div class="package">';
-        $html .= '<div><span id="hex_str_screen">'.$packageUtils->hexScreen($package->toString()).'</span></div>';
-        $html .= '<div><span id="hex_str_screen2">'.$packageUtils->hexScreen($package->toString(), "2").'</span></div>';
-        $html .= '<div><span id="device_sn_txt">'.$packageUtils->hexScreen($package->getDeviceSN()).'</span><span class="arrow">--></span>';
+        $html .= '<div><span id="hex_str_screen">'.$utils->hexScreen($package->toString()).'</span></div>';
+        $html .= '<div><span id="hex_str_screen2">'.$utils->hexScreen($package->toString(), "2").'</span></div>';
+        $html .= '<div><span id="device_sn_txt">'.$utils->hexScreen($package->getDeviceSN()).'</span><span class="arrow">--></span>';
         $html .= '<input type="text" class="form-control input-sm" id="device_sn" name="device_sn" value="'.hexToStr($package->getDeviceSN()).'" maxlength="16" /> <span id="device_sn_msg"></span></div>';
         $html .= '<div>'.$package->getVersion()."</div>";
         $html .= '<div>'.$package->getConnectType()."</div>";
@@ -89,9 +89,9 @@ function parse($hexStr)
         $html .= '<div>'.$package->getSeq().'</div>';
         $html .= '<div>'.$package->getSignature().'</div>';
         $html .= '<div>'.$package->getEof().'</div>';
-        $html .= '</div>';
-        return $html;
+        $html .= '</div>';        
     }
+    return $html;
 }
 
 function calc($hexStr)
@@ -110,13 +110,13 @@ function calc($hexStr)
         return $html;
     }
     $html = "";
-    $packageUtils = new PackageUtils();
-    $html .= $packageUtils->hexScreen($hexStr)."<br/>";
+    $utils = new Utils();
+    $html .= $utils->hexScreen($hexStr)."<br/>";
     $crc = new CRC16();
     $crcResult = $crc->calculationResult($hexStr);
     $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
     $signature = $crcResultCheck;
-    $html .= $packageUtils->hexScreen($signature)."<br/>";
+    $html .= $utils->hexScreen($signature)."<br/>";
     return $html;
 }
 ?>

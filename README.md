@@ -4,7 +4,7 @@ PHP开发工具包
 
 更新日期 | 名称 | 说明
 ---|---|---
-```2018-05-28``` | [crc16工具包](https://github.com/dodosss/packagist/blob/master/docs/crc.md) | 计算crc16工具
+```2018-05-29``` | [crc16工具包](https://github.com/dodosss/packagist/blob/master/docs/crc.md) | 计算crc16工具
 
 
 

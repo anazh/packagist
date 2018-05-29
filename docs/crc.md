@@ -11,13 +11,14 @@ composer dump-autoload
 composer remove dodosss/crc
 ```
 
-- #### composer.json
+- #### example/composer.json
   - ```repositories```，添加本地git库
   - ```autoload```，添加自动加载函
   - ```require```，```composer require dodosss/crc dev-master``` 自动添加
 
 ```
 {
+  // 本地开发git地址（非开发删除repositories内容）
   "repositories":[ 
        { 
            "type":"git", 
