@@ -113,7 +113,7 @@ function calc($hexStr)
     $utils = new Utils();
     $html .= $utils->hexScreen($hexStr)."<br/>";
     $crc = new CRC16();
-    $crcResult = $crc->calculationResult($hexStr);
+    $crcResult = $crc->calc($hexStr);
     $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
     $signature = $crcResultCheck;
     $html .= $utils->hexScreen($signature)."<br/>";

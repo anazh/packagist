@@ -3,8 +3,8 @@ namespace Dodosss\Crc;
 
 class CRC16
 {
-    private $_calculate_type;
-    private $_calculate_type_hash = [
+    private $calcType;
+    private $calcTypeHash = [
         'IBM',
         'MAXIM',
         'USB',
@@ -17,21 +17,21 @@ class CRC16
     ];
 
     /**
-     * @param string $calculate
+     * @param string $calc
      */
-    public function __construct($calculate = 'MODBUS')
+    public function __construct($calc = 'MODBUS')
     {
-        $this->_calculate_type = in_array(strtoupper($calculate), $this->_calculate_type_hash) ? strtoupper($calculate) : 'MODBUS';
+        $this->calcType = in_array(strtoupper($calc), $this->calcTypeHash) ? strtoupper($calc) : 'MODBUS';
     }
 
     /**
      * @param $str
      * @return null|string
      */
-    public function calculationResult($str)
+    public function calc($str)
     {
         $result = null;
-        switch ($this->_calculate_type) {
+        switch ($this->calcType) {
             case 'MODBUS':
                 $result = $this->crc16Modbus($str);
                 break;

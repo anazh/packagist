@@ -29,7 +29,7 @@ class Utils
             throw new \Exception("数据长度错误");
         }
         $fixHexStr = substr($hexStr, 0, (strlen($hexStr)-2*3)); // 40        
-        $crcResult = $this->crc->calculationResult($fixHexStr);
+        $crcResult = $this->crc->calc($fixHexStr);
         $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
         if(strtolower($signature)!=strtolower($crcResultCheck)){
             throw new \Exception("CRC16校验不通过");
@@ -83,7 +83,7 @@ class Utils
             $eof = $package->getEof();
             // 计算crc16 
             $hexStrNew = $deviceSN.$version.$connectType.$command.$dataLength.$data.$seq;
-            $crcResult = $this->crc->calculationResult($hexStrNew);
+            $crcResult = $this->crc->calc($hexStrNew);
             $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
             $signature = $crcResultCheck; // 新signature
             $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);       

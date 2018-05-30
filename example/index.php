@@ -1,27 +1,8 @@
 <?php
-namespace Dodo;
+use Dodosss\Crc\CRC16;
 
-// 加载自动加载文件
 require_once './vendor/autoload.php';
 
-set_time_limit(0);
-// php -S localhost:8000
-
-use Dodosss\Crc\CRC16;
-use Dodosss\Crc\Utils;
-
-// crc16
-$hexStr = "0102";
 $crc = new CRC16();
-$crcResult = $crc->calculationResult($hexStr);
-echo $crcResult."<br/>"; // E181
-
-
-// Package
-$deviceSNStr = "08010100AAAA0001";
-$hexStr = "303830353236313046454243303030310000020c0102010202020202020202020000002733560a";
-$utils = new Utils();
-echo $utils->hexScreen($hexStr)."<br/>";
-$package = $utils->reBuild($deviceSNStr, $hexStr); // 格式校验，错误抛出异常
-echo $utils->hexScreen($package->getDeviceSN())."<br/>";
-echo hexToStr($package->getDeviceSN())."<br/>";
+$crcResult = $crc->calc("303832");
+echo $crcResult."<br/>"; // DAE3
