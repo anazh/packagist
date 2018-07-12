@@ -19,9 +19,10 @@
         "use strict"        
 
         $(function() {
+            //device_sn
             $("#device_sn").on('input',function(e){
                 var device_sn = $("input[name='device_sn']").val();
-                var hex_str   = $("#hex_str_screen").html();                
+                var hex_str   = $("#hex_str_screen").html();
                 device_sn = device_sn.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'');
                 hex_str = hex_str.replace(/&nbsp;/ig, "");
                 if(device_sn.length!=16){
@@ -39,12 +40,73 @@
                         console.log(result);
                         if(result.status=="1"){
                             $('#device_sn_txt').html(result.data.device_sn_hex);
+
                             $('#hex_str_screen').html(result.data.hex_str_screen);
                             $('#hex_str_screen2').html(result.data.hex_str_screen2);
 
                             $('#device_sn_msg').html('<span class="tip-success">转换成功</span>');
                         } else if(result.status=="0"){
                             $('#device_sn_msg').html('<span class="tip-error">' + result.data.msg + '</span>');
+                        }                                
+                    }
+                });
+            });
+
+            //data
+            $("#data").on('input',function(e){
+                var data = $("input[name='data']").val();
+                var hex_str = $("#hex_str_screen").html();
+                data = data.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'');
+                hex_str = hex_str.replace(/&nbsp;/ig, "");
+                if((data.length%2)!=0){
+                    $('#data_msg').html('<span class="tip-error">数据域data非偶数</span>');
+                    return;
+                }
+                $('#data_msg').html("");
+                console.log(hex_str);
+                $.ajax({
+                    type: "POST",
+                    url: "?",
+                    data: {"data":data, "hex_str":hex_str},
+                    dataType: "json",
+                    success: function(result){
+                        console.log(result);
+                        if(result.status=="1"){
+                            $('#hex_str_screen').html(result.data.hex_str_screen);
+                            $('#hex_str_screen2').html(result.data.hex_str_screen2);
+                            $('#data_msg').html('<span class="tip-success">转换成功</span>');
+                        } else if(result.status=="0"){
+                            $('#data_msg').html('<span class="tip-error">' + result.data.msg + '</span>');
+                        }                                
+                    }
+                });
+            });
+
+            //seq
+            $("#seq").on('input',function(e){
+                var seq = $("input[name='seq']").val();
+                var hex_str = $("#hex_str_screen").html();
+                seq = seq.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'');
+                hex_str = hex_str.replace(/&nbsp;/ig, "");
+                if(seq.length!=8){
+                    $('#seq_msg').html('<span class="tip-error">seq长度非8位</span>');
+                    return;
+                }
+                $('#seq_msg').html("");
+                console.log(hex_str);
+                $.ajax({
+                    type: "POST",
+                    url: "?",
+                    data: {"seq":seq, "hex_str":hex_str},
+                    dataType: "json",
+                    success: function(result){
+                        console.log(result);
+                        if(result.status=="1"){
+                            $('#hex_str_screen').html(result.data.hex_str_screen);
+                            $('#hex_str_screen2').html(result.data.hex_str_screen2);
+                            $('#seq_msg').html('<span class="tip-success">转换成功</span>');
+                        } else if(result.status=="0"){
+                            $('#seq_msg').html('<span class="tip-error">' + result.data.msg + '</span>');
                         }                                
                     }
                 });
@@ -86,9 +148,9 @@
         }
         #device_sn{
             width: 250px;
+            margin-top:5px;
             display: inline-block;
             font-size: 16px;
-            margin-top:5px;
             font-weight: bold;
         } 
 
@@ -203,8 +265,20 @@
             color: #9d9a9a;
             padding-right: 1px;
             padding-left: 1px;
-            border:  1px solid #ebe9e9;
-            
+            border:  1px solid #ebe9e9;            
+        }
+
+        input.data{
+            width: 644px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        input.seq{
+            width: 250px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
         }
     </style>
 </head>

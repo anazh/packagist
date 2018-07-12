@@ -92,6 +92,67 @@ class Utils
         }
         return $result;
     }
+    public function reBuildSeq($seqStr, $hexStr)
+    {
+        $seqStr = str_replace(" ", "", $seqStr);
+        $hexStr = str_replace(" ", "", $hexStr);
+        $result = null;
+        if (strlen($seqStr)!=8) {
+            throw new \Exception("seq长度非8位");
+        }
+        $package = null;
+        try {
+            $package = $this->parse($hexStr);   // 格式校验，错误抛出异常
+            $deviceSN = $package->getDeviceSN();
+            $version = $package->getVersion();
+            $connectType = $package->getConnectType();
+            $command = $package->getCommand();
+            $dataLength = $package->getDataLength();
+            $data = $package->getData();
+            $seq = $seqStr; // 替换设备号
+            $eof = $package->getEof();
+            // 计算crc16 
+            $hexStrNew = $deviceSN.$version.$connectType.$command.$dataLength.$data.$seq;
+            $crcResult = $this->crc->calc($hexStrNew);
+            $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
+            $signature = $crcResultCheck; // 新signature
+            $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);       
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        return $result;
+    }
+    public function reBuildData($dataStr, $hexStr)
+    {
+        $dataStr = str_replace(" ", "", $dataStr);
+        $hexStr = str_replace(" ", "", $hexStr);
+        $result = null;
+        if (strlen($dataStr)%2!=0) {
+            throw new \Exception("data非偶数");
+        }
+        $package = null;
+        try {
+            $package = $this->parse($hexStr);   // 格式校验，错误抛出异常
+            $deviceSN = $package->getDeviceSN();
+            $version = $package->getVersion();
+            $connectType = $package->getConnectType();
+            $command = $package->getCommand();
+            $dataLength = dechex((strlen($dataStr)/2));// 替换设备号
+            $dataLength = strlen($dataLength)==1 ? "0".$dataLength : $dataLength;
+            $data = $dataStr;// 替换设备号
+            $seq = $package->getSeq(); 
+            $eof = $package->getEof();
+            // 计算crc16 
+            $hexStrNew = $deviceSN.$version.$connectType.$command.$dataLength.$data.$seq;
+            $crcResult = $this->crc->calc($hexStrNew);
+            $crcResultCheck = $crcResult[2].$crcResult[3].$crcResult[0].$crcResult[1];
+            $signature = $crcResultCheck; // 新signature
+            $result = $this->build($deviceSN, $version, $connectType, $command, $dataLength, $data, $seq, $signature, $eof);       
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        return $result;
+    }
 
     public function hexScreen($hexStr, $type="1")
     {

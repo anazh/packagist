@@ -41,6 +41,54 @@ function init()
         }
     }
 
+    // 重建帧数据
+    if(isset($_POST['data']) && isset($_POST['hex_str'])){
+        $dataStr    = $_POST['data'];
+        $hexStr         = $_POST['hex_str'];
+        $dataStr    = str_replace(" ", "", $dataStr);
+        $hexStr         = str_replace(array(" ", "&nbsp;"),  array("", ""), $hexStr);
+        // check seqStr
+        if (strlen($dataStr)%2!=0) {
+            json_error(array("msg" => "data非偶数"));
+        }
+        try {
+            $utils = new Utils();
+            $package = $utils->reBuildData($dataStr, $hexStr); // 格式校验，错误抛出异常
+            $data = array(
+                "data_hex"  => ($package->getData()),
+                "hex_str_screen" => $utils->hexScreen($package->toString()),
+                "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
+            );
+            json_success($data);
+        } catch (\Exception $e) {
+            json_error(array("msg" => $e->getMessage()));
+        }
+    }
+
+    // 重建帧数据
+    if(isset($_POST['seq']) && isset($_POST['hex_str'])){
+        $seqStr    = $_POST['seq'];
+        $hexStr         = $_POST['hex_str'];
+        $seqStr    = str_replace(" ", "", $seqStr);
+        $hexStr         = str_replace(array(" ", "&nbsp;"),  array("", ""), $hexStr);
+        // check seqStr
+        if ($seqStr == "" || $seqStr== "\n" || strlen($seqStr) !=8) {
+            json_error(array("msg" => "seq长度非16"));
+        }
+        try {
+            $utils = new Utils();
+            $package = $utils->reBuildSeq($seqStr, $hexStr); // 格式校验，错误抛出异常
+            $data = array(
+                "seq_hex"  => ($package->getSeq()),
+                "hex_str_screen" => $utils->hexScreen($package->toString()),
+                "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
+            );
+            json_success($data);
+        } catch (\Exception $e) {
+            json_error(array("msg" => $e->getMessage()));
+        }
+    }
+
     // $_GET
     $hex_str = isset($_GET['hex_str']) && $_GET['hex_str'] ? $_GET['hex_str'] : "303830353236313046454243303030310000020c0102010202020202020202020000002733560a";
     $hex_str2 = isset($_GET['hex_str2']) ? $_GET['hex_str2'] : "";
@@ -79,7 +127,9 @@ function parse($hexStr)
         $html .= '<div><span id="hex_str_screen">'.$utils->hexScreen($package->toString()).'</span></div>';
         $html .= '<div><span id="hex_str_screen2">'.$utils->hexScreen($package->toString(), "2").'</span></div>';
         $html .= '<div><span id="device_sn_txt">'.$utils->hexScreen($package->getDeviceSN()).'</span><span class="arrow">--></span>';
-        $html .= '<input type="text" class="form-control input-sm" id="device_sn" name="device_sn" value="'.hexToStr($package->getDeviceSN()).'" maxlength="16" /> <span id="device_sn_msg"></span></div>';
+        $html .= '<input type="text" class="form-control input-sm" id="device_sn" name="device_sn" value="'.hexToStr($package->getDeviceSN()).'" maxlength="16" /> <span id="device_sn_msg"></span></div>';      
+        $html .= '<div><input type="text" class="form-control input-sm data" id="data" name="data" value="'.$package->getData().'" /> <span id="data_msg"></span></div>';
+        $html .= '<div><input type="text" class="form-control input-sm seq" id="seq" name="seq" value="'.$package->getSeq().'" maxlength="8" /> <span id="seq_msg"></span></div>';
         $html .= '<div>'.$package->getVersion()."</div>";
         $html .= '<div>'.$package->getConnectType()."</div>";
         $html .= '<div>'.$package->getCommand()."</div>";
