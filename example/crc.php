@@ -31,7 +31,6 @@ function init()
             $utils = new Utils();
             $package = $utils->reBuild($deviceSNStr, $hexStr); // 格式校验，错误抛出异常
             $data = array(
-                "device_sn_hex"  => $utils->hexScreen($package->getDeviceSN()),
                 "hex_str_screen" => $utils->hexScreen($package->toString()),
                 "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
             );
@@ -55,7 +54,8 @@ function init()
             $utils = new Utils();
             $package = $utils->reBuildData($dataStr, $hexStr); // 格式校验，错误抛出异常
             $data = array(
-                "data_hex"  => ($package->getData()),
+                "data_length" => $package->getDataLength(),
+                "data_length_dec" => $package->getDataLengthDec(),
                 "hex_str_screen" => $utils->hexScreen($package->toString()),
                 "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
             );
@@ -79,7 +79,6 @@ function init()
             $utils = new Utils();
             $package = $utils->reBuildSeq($seqStr, $hexStr); // 格式校验，错误抛出异常
             $data = array(
-                "seq_hex"  => ($package->getSeq()),
                 "hex_str_screen" => $utils->hexScreen($package->toString()),
                 "hex_str_screen2" => $utils->hexScreen($package->toString(), "2"),
             );
@@ -90,7 +89,7 @@ function init()
     }
 
     // $_GET
-    $hex_str = isset($_GET['hex_str']) && $_GET['hex_str'] ? $_GET['hex_str'] : "303830353236313046454243303030310000020c0102010202020202020202020000002733560a";
+    $hex_str = isset($_GET['hex_str']) && $_GET['hex_str'] ? $_GET['hex_str'] : "303230313031303041414141303030310000a0095b46ce330000000100000000e104DA0a";
     $hex_str2 = isset($_GET['hex_str2']) ? $_GET['hex_str2'] : "";
     $result = "";
     if( isset($_GET['hex_str']) ){
@@ -101,9 +100,17 @@ function init()
         $result = calc($hexStr);
     }
 
+    if( isset($_GET['act']) && trim($_GET['act'])=="calc" ){
+        $class_calc = "show";
+        $class_decode = "hide";
+    }else{
+        $class_calc = "hide";
+        $class_decode = "show";
+    }
+
     // 简单模板
     $html = file_get_contents("crc.html");
-    $html = str_replace(array('{{hex_str}}' , '{{hex_str2}}', '{{result}}'), array($hex_str, $hex_str2, $result), $html);
+    $html = str_replace(array('{{hex_str}}' , '{{hex_str2}}', '{{result}}', '{{class_calc}}', '{{class_decode}}'), array($hex_str, $hex_str2, $result, $class_calc, $class_decode), $html);
     echo $html;
 }
 
@@ -126,19 +133,12 @@ function parse($hexStr)
         $html .= '<div class="package">';
         $html .= '<div><span id="hex_str_screen">'.$utils->hexScreen($package->toString()).'</span></div>';
         $html .= '<div><span id="hex_str_screen2">'.$utils->hexScreen($package->toString(), "2").'</span></div>';
-        $html .= '<div><span id="device_sn_txt">'.$utils->hexScreen($package->getDeviceSN()).'</span><span class="arrow">--></span>';
-        $html .= '<input type="text" class="form-control input-sm" id="device_sn" name="device_sn" value="'.hexToStr($package->getDeviceSN()).'" maxlength="16" /> <span id="device_sn_msg"></span></div>';      
-        $html .= '<div><input type="text" class="form-control input-sm data" id="data" name="data" value="'.$package->getData().'" /> <span id="data_msg"></span></div>';
-        $html .= '<div><input type="text" class="form-control input-sm seq" id="seq" name="seq" value="'.$package->getSeq().'" maxlength="8" /> <span id="seq_msg"></span></div>';
-        $html .= '<div>'.$package->getVersion()."</div>";
-        $html .= '<div>'.$package->getConnectType()."</div>";
-        $html .= '<div>'.$package->getCommand()."</div>";
-        $html .= '<div>'.$package->getDataLength().'<span class="arrow">--></span>';
-        $html .= '<span>'.$package->getDataLengthDec()."</span></div>";
-        $html .= '<div>'.$package->getData().'</div>';
-        $html .= '<div>'.$package->getSeq().'</div>';
-        $html .= '<div>'.$package->getSignature().'</div>';
-        $html .= '<div>'.$package->getEof().'</div>';
+        $html .= '<div><span class="parse_label">dataLength</span><span id="dataLength" class="parse_text">'.$package->getDataLength().'</span><span class="arrow">--></span>';
+        $html .= '<span id="dataLengthDec" class="parse_text">'.$package->getDataLengthDec()."</span></div>";
+        $html .= '<div><span class="parse_label">device_sn</span><input type="text" class="form-control input-sm parse_input" id="device_sn" name="device_sn" value="'.hexToStr($package->getDeviceSN()).'" maxlength="16" /> <span id="device_sn_msg"></span></div>';      
+        
+        $html .= '<div><span class="parse_label">data</span><input type="text" class="form-control input-sm parse_input" id="data" name="data" value="'.$package->getData().'" /> <span id="data_msg"></span></div>';
+        $html .= '<div><span class="parse_label">seq</span><input type="text" class="form-control input-sm parse_input" id="seq" name="seq" value="'.$package->getSeq().'" maxlength="8" /> <span id="seq_msg"></span></div>';
         $html .= '</div>';        
     }
     return $html;

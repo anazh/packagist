@@ -39,11 +39,8 @@
                     success: function(result){
                         console.log(result);
                         if(result.status=="1"){
-                            $('#device_sn_txt').html(result.data.device_sn_hex);
-
                             $('#hex_str_screen').html(result.data.hex_str_screen);
                             $('#hex_str_screen2').html(result.data.hex_str_screen2);
-
                             $('#device_sn_msg').html('<span class="tip-success">转换成功</span>');
                         } else if(result.status=="0"){
                             $('#device_sn_msg').html('<span class="tip-error">' + result.data.msg + '</span>');
@@ -72,6 +69,9 @@
                     success: function(result){
                         console.log(result);
                         if(result.status=="1"){
+                            $('#dataLength').html(result.data.data_length);
+                            $('#dataLengthDec').html(result.data.data_length_dec);
+
                             $('#hex_str_screen').html(result.data.hex_str_screen);
                             $('#hex_str_screen2').html(result.data.hex_str_screen2);
                             $('#data_msg').html('<span class="tip-success">转换成功</span>');
@@ -125,6 +125,12 @@
             margin-top: 5px;
             margin-bottom: 5px;
         }
+        .show{            
+            display: block;
+        }
+        .hide{            
+            display: none;
+        }
         #hex_str, #hex_str2{
             width: 100%;
             display: inline-block;
@@ -145,14 +151,7 @@
             color: #ddd;
             padding-right: 5px;
             padding-left: 5px;
-        }
-        #device_sn{
-            width: 250px;
-            margin-top:5px;
-            display: inline-block;
-            font-size: 16px;
-            font-weight: bold;
-        } 
+        }        
 
         .tip-success:before, .tip-error:before {
             font-family:FontAwesome;
@@ -268,17 +267,42 @@
             border:  1px solid #ebe9e9;            
         }
 
-        input.data{
-            width: 644px;
-            display: inline-block;
-            font-size: 16px;
-            font-weight: bold;
+        input#device_sn{
+            margin-top:5px;
+        } 
+        span.device_sn_msg{
+            
         }
-        input.seq{
-            width: 250px;
-            display: inline-block;
+        input#data{
+
+        }
+        input#seq{
+
+        }
+        .parse_text{
             font-size: 16px;
+        }
+        input.parse_input{
+            font-size: 16px;
+            display: inline-block;            
+        }
+        span.parse_label{
+            width: 80px;
+            text-align: left;
             font-weight: bold;
+            display: block;
+        }        
+        .nav a{
+             font-size: 16px;
+             width: 28px;
+             height: 28px;
+             line-height: 28px;
+             text-align: center;
+             display: inline-block;
+             border: 1px solid #f89b48;
+        }
+        .nav a:last-child{
+            border-left: 0px;
         }
     </style>
 </head>
@@ -293,23 +317,27 @@
         <div><span class="sec_6 letter">01</span><span class="desc">数据域</span></div>
         <div><span class="sec_7 letter">01</span><span class="desc">seq&nbsp;&nbsp;</span></div>
         <div><span class="sec_8 letter">01</span><span class="desc">crc&nbsp;&nbsp;</span></div>
-        <div><span class="sec_9 letter">01</span><span class="desc">结束符&nbsp;</span></div>
+        <div><span class="sec_9 letter">01</span><span class="desc">结束符&nbsp;</span></div>   
+
+        <div class="nav"><a href="?act=decode" title="decode">D</a><a href="?act=calc" title="CRC16">C</a></div>     
     </div>
-    <div class="text-left decode">
+    
+    <div class="text-left decode {{class_decode}}">
         <span class="title">Decode</span>
         <span class="desc">（数据解码）</span><br/>
         <form action="?" method="get" class="form-inline text-left">
             <textarea id="hex_str" name="hex_str" class="form-control" style="height:55px;" placeholder="16进制字符串" onkeyup="this.value=this.value.replace(/[^\w]/g,'');">{{hex_str}}</textarea>
             <input type="submit" value="解码" class="btn btn-default input-sm btn_submit" />
+            <input type="hidden" name="act" value="decode" />
         </form>
     </div>
-    <hr/>
-    <div class="text-left calc">
+    <div class="text-left calc {{class_calc}}">
         <span class="title">CRC16</span>
         <span class="desc">（CRC16值计算）</span><br/>
         <form action="?" method="get" class="form-inline text-left">
             <textarea id="hex_str2" name="hex_str2" class="form-control" style="height:55px;" placeholder="16进制字符串">{{hex_str2}}</textarea>
             <input type="submit" value="计算" class="btn btn-default input-sm btn_submit" />
+            <input type="hidden" name="act" value="calc" />
         </form>
     </div>
     {{result}}
