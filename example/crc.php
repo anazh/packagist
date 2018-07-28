@@ -98,6 +98,23 @@ function init()
     }else if( isset($_GET['hex_str2']) ){
         $hexStr = $_GET['hex_str2'];
         $result = calc($hexStr);
+        if( isset($_GET['format']) && $_GET['format']=="json" ){
+                $arr = $result ? explode('<br/>', $result) : array();
+                if(count($arr)>2){
+                    $crc = str_replace(array('&nbsp;', ' '), array('', ''), $arr[1]);
+                    $data = array(
+                        "status" => 1,
+                        "data"   => array("crc" => $crc),
+                    );
+                    echo json_encode($data);exit;
+                }else{
+                    $data = array(
+                        "status" => 0,
+                        "data"   => array("msg" => "error"),
+                    );
+                    echo json_encode($data);exit;
+                }
+        }
     }
 
     if( isset($_GET['act']) && trim($_GET['act'])=="calc" ){
